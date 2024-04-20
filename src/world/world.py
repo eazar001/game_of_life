@@ -1,20 +1,21 @@
-from random import choice
+from random import randint
 from copy import deepcopy
 import pygame
 
 
-class World:
-    choices = [True, False]
+# increment the neighbor count of a cell state by n
+def set_live_neighbors(cell_state, n):
+    return ((cell_state >> 1) + n) << 1 if not cell_state & 1 else (((cell_state >> 1) + n) << 1) ^ 1
 
+
+class World:
     def __init__(self, screen, width):
         self.width = width
         self.height = width
 
-        self.cells = [[choice(World.choices) for _x in range(self.width)] for _y in range(self.height)]
+        self.cells = [[randint(0, 1) for _x in range(self.width)] for _y in range(self.height)]
         self.population = len([cell for row in self.cells for cell in row if cell])
-        self.next_cells = deepcopy(self.cells)
         self.neighbors = []
-        self.live_neighbors = [[0 for _x in range(self.width)] for _y in range(self.height)]
         self.screen = screen
         self.generation = 0
 
@@ -31,9 +32,12 @@ class World:
 
                 self.neighbors[y].append([(left, y), (right, y), (x, up), (x, down), (left, up), (right, up), (left, down), (right, down)])
 
-                if cell_state:
+                if cell_state & 1:
                     for i, j in self.neighbors[y][x]:
-                        self.live_neighbors[j][i] += 1
+                        self.cells[j][i] = set_live_neighbors(self.cells[j][i], 1)
+                        # self.live_neighbors[j][i] += 1
+
+        self.next_cells = deepcopy(self.cells)
 
     def tick(self):
         changed = []
@@ -42,44 +46,40 @@ class World:
         # current state
         for y, row in enumerate(self.cells):
             for x, cell_state in enumerate(row):
-                live_neighbors = self.live_neighbors[y][x]
-
                 match cell_state:
-                    case True:
+                    case 1 | 3 | 9 | 11 | 13 | 15 | 17:
                         # death by underpopulation or overcrowding (becomes a dead cell)
-                        if live_neighbors < 2 or live_neighbors > 3:
-                            self.next_cells[y][x] = False
+                        self.next_cells[y][x] ^= 1
 
-                            pygame.draw.rect(
-                                self.screen,
-                                "black",
-                                (self.cell_width * x, self.cell_height * y, self.cell_width, self.cell_height),
-                                0
-                            )
+                        pygame.draw.rect(
+                            self.screen,
+                            "black",
+                            (self.cell_width * x, self.cell_height * y, self.cell_width, self.cell_height),
+                            0
+                        )
 
-                            changed.append((x, y))
-                    case _:
+                        changed.append((x, y))
+                    case 6:
                         # is born (becomes a live cell)
-                        if live_neighbors == 3:
-                            self.next_cells[y][x] = True
+                        self.next_cells[y][x] ^= 1
 
-                            pygame.draw.rect(
-                                self.screen,
-                                "green",
-                                (self.cell_width * x, self.cell_height * y, self.cell_width, self.cell_height),
-                                0
-                            )
+                        pygame.draw.rect(
+                            self.screen,
+                            "green",
+                            (self.cell_width * x, self.cell_height * y, self.cell_width, self.cell_height),
+                            0
+                        )
 
-                            changed.append((x, y))
+                        changed.append((x, y))
 
         # now, we can finally transition all the changed cells to the next state
         for x, y in changed:
             self.cells[y][x] = self.next_cells[y][x]
-            delta = 1 if self.cells[y][x] else -1
+            delta = 1 if self.cells[y][x] & 1 else -1
 
             self.population += delta
 
             for i, j in self.neighbors[y][x]:
-                self.live_neighbors[j][i] += delta
+                self.cells[j][i] = self.next_cells[j][i] = set_live_neighbors(self.next_cells[j][i], delta)
 
         self.generation += 1
