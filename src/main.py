@@ -1,3 +1,5 @@
+import time
+
 from world.world import World
 import pygame
 
@@ -15,10 +17,18 @@ def main():
     scale = 0.7
     w = World(width)
 
+    paused = False
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                paused = not paused
+
+        if paused:
+            time.sleep(0.05)
+            continue
 
         w.tick()
 
