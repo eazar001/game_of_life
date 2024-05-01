@@ -11,7 +11,8 @@ def main():
 
     screen.fill("black")
 
-    height = width = 300
+    height = width = 80
+    scale = 0.7
     w = World(width)
 
     while running:
@@ -28,20 +29,20 @@ def main():
                 pygame.draw.rect(
                     screen,
                     "green",
-                    (cell_width * x, cell_height * y, cell_width, cell_height),
+                    (cell_width * x * scale, cell_height * y * scale, cell_width * scale, cell_height * scale),
                     0
                 )
             else:
                 pygame.draw.rect(
                     screen,
                     "black",
-                    (cell_width * x, cell_height * y, cell_width, cell_height),
+                    (cell_width * x * scale, cell_height * y * scale, cell_width * scale, cell_height * scale),
                     0
                 )
 
         print(f'FPS: {clock.get_fps()}, generations: {w.generation}, population: {w.population}')
         pygame.display.flip()
-        clock.tick()
+        clock.tick(20)
 
 
 if __name__ == '__main__':
