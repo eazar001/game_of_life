@@ -33,6 +33,10 @@ class World:
                         self.live_neighbors[j][i] += 1
 
     def tick(self):
+        self.calculate_next_cells()
+        self.transition()
+
+    def calculate_next_cells(self):
         self.changed = []
 
         # update the next state of all cells, using the current state of all the cells only, without updating the

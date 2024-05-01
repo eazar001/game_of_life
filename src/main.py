@@ -11,7 +11,7 @@ def main():
 
     screen.fill("black")
 
-    height = width = 400
+    height = width = 300
     w = World(width)
 
     while running:
@@ -20,7 +20,6 @@ def main():
                 running = False
 
         w.tick()
-        w.transition()
 
         cell_width, cell_height = screen.get_width() / width, screen.get_height() / height
 
