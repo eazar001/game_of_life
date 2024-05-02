@@ -30,7 +30,7 @@ generation.
 The design of my simulation was straightforward. A `World` class was created with a single input that
 is used to input the `width` of the grid. The representation of the grid was chosen to be a toroid
 wrap-around 2-D grid, with simple modular arithmetic to find neighbors along the edges of the grid. The
-`World` class stores a 2d list of booleans lists. A duplicate 2d list stores the state updates before
+`World` class stores a 2-D list of booleans lists. A duplicate 2-D list stores the state updates before
 transitioning to the next generation, and once analysis is completed, the cells grid is swapped with
 the transition grid. All of this is taken care of in the `tick` function. The tick function also updates
 statistics such as population, board density (live cells per cell). On each tick, when a cell either
@@ -38,13 +38,18 @@ transitions to a dead or alive state, it then increments or decrements all eight
 is an efficient way to handle the ticks without calculating neighbor counts of each cell redundantly.
 Booleans where chosen rather than using another class in order to maintain some efficiency on each cycle.
 
+Another 2-D list was used as a lookup table to store and retrieve the neighbor counts of each cell
+efficiently.
+
 ### Challenges
 
 The first optimization to reduce redundant neighbor calculations was effective, but then I proceeded to
 fall in the trap of getting obsessed over performance. One of the next steps I took was to try converting
 all logical control flow structures into bitwise operations and matching on integers in switch statements.
-Much to my surprise (and chagrin), I actually noticed a significant performance degradation. My next
-step was to try some sort of parallelized implementation. Normal threads wouldn't do the job in Python
+Much to my surprise (and chagrin), I actually noticed a significant performance degradation. You can
+actually view my failed attempt in the `bitwise` branch of this repo.
+
+My next step was to try some sort of parallelized implementation. Normal threads wouldn't do the job in Python
 due to limitations imposed by the GIL (global interpreter lock), which would do little more than force
 me into a plethora of context switches on every tick. The next step was to try using the `multiprocessing`
 module to map chunks of rows across N process (where N = CPU count). Unsurprisingly, the overhead of
