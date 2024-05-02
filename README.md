@@ -36,7 +36,7 @@ the transition grid. All of this is taken care of in the `tick` function. The ti
 statistics such as population, board density (live cells per cell). On each tick, when a cell either
 transitions to a dead or alive state, it then increments or decrements all eight of its neighbors. This
 is an efficient way to handle the ticks without calculating neighbor counts of each cell redundantly.
-Booleans where chosen rather than using another class in order to maintain some efficiency on each cycle.
+Booleans were chosen rather than using another class in order to maintain some efficiency on each cycle.
 
 Another 2-D list was used as a lookup table to store and retrieve the neighbor counts of each cell
 efficiently.
