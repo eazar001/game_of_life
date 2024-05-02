@@ -78,7 +78,7 @@ def main():
         gens = font.render(f'Generation: {w.generation}', True, (0xFF, 0xFF, 0xFF))
         pop = font.render(f'Population: {w.population}', True, (0xFF, 0xFF, 0xFF))
         den = font.render(f'Density: {(w.population / volume):.2f}', True, (0xFF, 0xFF, 0xFF))
-        n_count = font.render(f'Average neighbor count: {(w.mean_neighbor_count):.2f}', True, (0xFF, 0xFF, 0xFF))
+        n_count = font.render(f'Average neighbor count: {w.mean_neighbor_count:.2f}', True, (0xFF, 0xFF, 0xFF))
         dim = font.render(f'Dimensions: {w.width} x {w.height}', True, (0xFF, 0xFF, 0xFF))
         instr = font.render(f'Instructions: [ENTER] = new random configuration, [ESC] = quit, [-/=] = increase/decrease board size', True, (0xFF, 0xFF, 0xFF))
         instr2 = font.render(f'[UP/DOWN] = increase/decrease frame rate limit, [SPACE] = pause/play', True, (0xFF, 0xFF, 0xFF))
