@@ -6,9 +6,7 @@ class World:
     choices = [True, False]
 
     def __init__(self, width):
-        self.width = width
-        self.height = width
-
+        self.height = self.width = width
         self.cells = [[choice(World.choices) for _x in range(self.width)] for _y in range(self.height)]
         self.population = len([cell for row in self.cells for cell in row if cell])
         self.next_cells = deepcopy(self.cells)
@@ -16,6 +14,8 @@ class World:
         self.live_neighbors = [[0 for _x in range(self.width)] for _y in range(self.height)]
         self.changed = []
         self.generation = 0
+        self.max_capacity = width * width
+        self.mean_neighbor_count = 0
 
         for y, row in enumerate(self.cells):
             self.neighbors.append([])
@@ -44,6 +44,7 @@ class World:
         for y, row in enumerate(self.cells):
             for x, cell_state in enumerate(row):
                 live_neighbors = self.live_neighbors[y][x]
+                self.mean_neighbor_count += self.live_neighbors[y][x]
 
                 match cell_state:
                     case True:
@@ -69,3 +70,4 @@ class World:
                 self.live_neighbors[j][i] += delta
 
         self.generation += 1
+        self.mean_neighbor_count /= self.max_capacity
