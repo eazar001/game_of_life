@@ -64,7 +64,7 @@ versions and thus recommend 3.11 or above just to be safe. PyGame is also a depe
 the program. After cloning this repo, go to the root of the repo and enter:
 
 ```
-# activates a virtual environment
+# create a virtual environment
 python -m venv venv
 ```
 
